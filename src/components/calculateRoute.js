@@ -20,15 +20,20 @@ const calculateRoute = (mapRef, platform, startWayPoint, destinationWayPoint, ta
   table = tableRef;
   getGeoCode(startWayPoint.current.value, (data) => {
     let wayPointOne = data.items[0].position;
+    console.log(data.items[0].position);
 
     getGeoCode(destinationWayPoint.current.value, (data) => {
       let wayPointTwo = data.items[0].position;
+      console.log(data.items[0].position);
       const routingParamsWithPolyLine = getRoutingParameters(wayPointOne, wayPointTwo, "polyline");
       const routingParamsWithSummary = getRoutingParameters(wayPointOne, wayPointTwo, "summary");
       router.calculateRoute(routingParamsWithPolyLine, drawRoute, (error) => alert(error));
       router.calculateRoute(
         routingParamsWithSummary,
-        (data) => showTable(getRoadValues(startWayPoint, destinationWayPoint, data)),
+        (data) => {
+          let values = getRoadValues(startWayPoint, destinationWayPoint, data);
+          if (values !== "") showTable(values);
+        },
         (error) => alert(error)
       );
     });
@@ -36,9 +41,11 @@ const calculateRoute = (mapRef, platform, startWayPoint, destinationWayPoint, ta
 };
 
 const getRoadValues = (start, end, data) => {
-  start = start.current.value.charAt(0).toUpperCase() + start.current.value.slice(1);
-  end = end.current.value.charAt(0).toUpperCase() + end.current.value.slice(1);
-  return [start, end, data.routes[0].sections[0].summary.length, data.routes[0].sections[0].summary.duration];
+  if (data.routes.length) {
+    start = start.current.value.charAt(0).toUpperCase() + start.current.value.slice(1);
+    end = end.current.value.charAt(0).toUpperCase() + end.current.value.slice(1);
+    return [start, end, data.routes[0].sections[0].summary.length, data.routes[0].sections[0].summary.duration];
+  } else return "";
 };
 
 const getRoutingParameters = (startWayPoint, destinationWayPoint, returnType) => {
@@ -76,12 +83,13 @@ const getGeoCode = (location, callback) => {
   fetch(`https://geocode.search.hereapi.com/v1/geocode?q=${location}&apiKey=${API_KEY}`)
     .then((res) => res.json())
     .then((res) => {
-      if (res.error) alert("ApiKey invalid or expired!");
+      if (res.error) throw new Error("ApiKey invalid or expired!");
       else {
         if (res.items.length) callback(res);
         else alert(`Location (${location}) not found!`);
       }
-    });
+    })
+    .catch((error) => alert(error));
 };
 
 const showTable = (values) => {
