@@ -3,8 +3,8 @@ import styled from "styled-components";
 import setUp from "./mapSetUp";
 
 const MapContainer = styled.div`
-  max-width: 100vw;
-  height: 80vh;
+  width: 100vw;
+  height: 100vh;
 `;
 
 const Map = (props) => {

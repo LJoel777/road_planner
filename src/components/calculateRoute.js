@@ -28,14 +28,17 @@ const calculateRoute = (mapRef, platform, startWayPoint, destinationWayPoint, ta
       router.calculateRoute(routingParamsWithPolyLine, drawRoute, (error) => alert(error));
       router.calculateRoute(
         routingParamsWithSummary,
-        (data) => {
-          let values = [startWayPoint.current.value, destinationWayPoint.current.value, data.routes[0].sections[0].summary.length, data.routes[0].sections[0].summary.duration];
-          showTable(values);
-        },
+        (data) => showTable(getRoadValues(startWayPoint, destinationWayPoint, data)),
         (error) => alert(error)
       );
     });
   });
+};
+
+const getRoadValues = (start, end, data) => {
+  start = start.current.value.charAt(0).toUpperCase() + start.current.value.slice(1);
+  end = end.current.value.charAt(0).toUpperCase() + end.current.value.slice(1);
+  return [start, end, data.routes[0].sections[0].summary.length, data.routes[0].sections[0].summary.duration];
 };
 
 const getRoutingParameters = (startWayPoint, destinationWayPoint, returnType) => {
@@ -90,8 +93,10 @@ const showTable = (values) => {
       <th>${Math.round(values[3] / 60)} min</th>
     </tr>
     `;
+  table.current.querySelector("tbody").innerHTML = "";
   table.current.querySelector("tbody").insertAdjacentHTML("beforeend", outerHtml);
   $("#table").DataTable();
+  table.current.style.display = "table";
 };
 
 export default calculateRoute;

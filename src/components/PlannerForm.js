@@ -3,7 +3,30 @@ import styled from "styled-components";
 import calculateRoute from "./calculateRoute";
 
 const Form = styled.div`
-  margin: 10px;
+  position: absolute;
+  background: white;
+  width: 100%;
+  padding: 10px;
+  bottom: 0;
+  z-index: 1;
+  .locations {
+    input {
+      padding: 5px;
+      margin-left: 5px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      text-transform: capitalize;
+    }
+    button {
+      margin-left: 5px;
+      padding: 5px;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+  }
+  table {
+    display: none;
+  }
 `;
 
 const PlannerForm = (props) => {
@@ -20,12 +43,14 @@ const PlannerForm = (props) => {
 
   return (
     <Form>
-      <input type="text" ref={startWayPoint} placeholder="Choose starting point..." />
-      <input type="text" ref={destinationWayPoint} placeholder="Choose destination..." />
-      <button type="submit" onClick={onSubmit}>
-        Submit
-      </button>
-      <table id="table" className="display" ref={table}>
+      <div className="locations">
+        <input type="text" ref={startWayPoint} placeholder="Choose starting point..." />
+        <input type="text" ref={destinationWayPoint} placeholder="Choose destination..." />
+        <button type="submit" onClick={onSubmit}>
+          Submit
+        </button>
+      </div>
+      <table id="table" ref={table}>
         <thead>
           <tr>
             <th>From</th>
