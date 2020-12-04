@@ -3,8 +3,9 @@ import styled from "styled-components";
 import setUp from "./mapSetUp";
 
 const MapContainer = styled.div`
+  flex: 2;
   width: 100vw;
-  height: 100vh;
+  height: 85vh;
 `;
 
 const Map = (props) => {
