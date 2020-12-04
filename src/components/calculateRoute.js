@@ -56,7 +56,13 @@ const drawRoute = function (result) {
 const getGeoCode = (location, callback) => {
   fetch(`https://geocode.search.hereapi.com/v1/geocode?q=${location}&apiKey=${API_KEY}`)
     .then((res) => res.json())
-    .then((res) => callback(res));
+    .then((res) => {
+      if (res.error) alert("ApiKey invalid or expired!");
+      else {
+        if (res.items.length) callback(res);
+        else alert(`Location (${location}) not found!`);
+      }
+    });
 };
 
 const showTable = (values) => {};

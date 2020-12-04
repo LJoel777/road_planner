@@ -12,7 +12,8 @@ const PlannerForm = (props) => {
   const table = useRef();
 
   const onSubmit = () => {
-    calculateRoute(map, platform, startWayPoint, destinationWayPoint, table);
+    if (startWayPoint.current.value == "" || destinationWayPoint.current.value == "") alert("All fields required");
+    else calculateRoute(map, platform, startWayPoint, destinationWayPoint, table);
   };
 
   return (
