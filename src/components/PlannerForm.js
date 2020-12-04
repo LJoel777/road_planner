@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import styled from "styled-components";
+import calculateRoute from "./calculateRoute";
 
 const Form = styled.div``;
 
@@ -8,8 +9,11 @@ const PlannerForm = (props) => {
   const map = props.map;
   const startWayPoint = useRef();
   const destinationWayPoint = useRef();
+  const table = useRef();
 
-  const onSubmit = () => {};
+  const onSubmit = () => {
+    calculateRoute(map, platform, startWayPoint, destinationWayPoint, table);
+  };
 
   return (
     <Form>
@@ -18,6 +22,17 @@ const PlannerForm = (props) => {
       <button type="submit" onClick={onSubmit}>
         Submit
       </button>
+      <table id="table" className="display" ref={table}>
+        <thead>
+          <tr>
+            <th>From</th>
+            <th>To</th>
+            <th>Distance</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </Form>
   );
 };
