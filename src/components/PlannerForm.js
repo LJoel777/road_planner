@@ -2,7 +2,9 @@ import React, { useRef } from "react";
 import styled from "styled-components";
 import calculateRoute from "./calculateRoute";
 
-const Form = styled.div``;
+const Form = styled.div`
+  margin: 10px;
+`;
 
 const PlannerForm = (props) => {
   const platform = props.platform;

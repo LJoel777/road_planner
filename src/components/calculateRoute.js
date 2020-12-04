@@ -1,22 +1,39 @@
 import H from "@here/maps-api-for-javascript";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "jquery/dist/jquery.min.js";
+
+import "datatables.net-dt/js/dataTables.dataTables";
+import "datatables.net-dt/css/jquery.dataTables.min.css";
+import $ from "jquery";
 
 const API_KEY = "4jT00cTYzYKV-lhBKaSLaGw5NxljCfqOWAA0hDibxA0";
 let router = null;
 let map = null;
+let table = null;
 let routeLine;
 let startMarker;
 let endMarker;
 
-const calculateRoute = (map1, platform, startWayPoint, destinationWayPoint, table) => {
+const calculateRoute = (mapRef, platform, startWayPoint, destinationWayPoint, tableRef) => {
   router = platform.getRoutingService(null, 8);
-  map = map1;
+  map = mapRef;
+  table = tableRef;
   getGeoCode(startWayPoint.current.value, (data) => {
     let wayPointOne = data.items[0].position;
 
     getGeoCode(destinationWayPoint.current.value, (data) => {
       let wayPointTwo = data.items[0].position;
       const routingParamsWithPolyLine = getRoutingParameters(wayPointOne, wayPointTwo, "polyline");
+      const routingParamsWithSummary = getRoutingParameters(wayPointOne, wayPointTwo, "summary");
       router.calculateRoute(routingParamsWithPolyLine, drawRoute, (error) => alert(error));
+      router.calculateRoute(
+        routingParamsWithSummary,
+        (data) => {
+          let values = [startWayPoint.current.value, destinationWayPoint.current.value, data.routes[0].sections[0].summary.length, data.routes[0].sections[0].summary.duration];
+          showTable(values);
+        },
+        (error) => alert(error)
+      );
     });
   });
 };
@@ -32,7 +49,6 @@ const getRoutingParameters = (startWayPoint, destinationWayPoint, returnType) =>
 };
 
 const drawRoute = function (result) {
-  console.log(result);
   if (routeLine) map.removeObject(routeLine);
   if (startMarker) map.removeObject(startMarker);
   if (endMarker) map.removeObject(endMarker);
@@ -50,7 +66,7 @@ const drawRoute = function (result) {
       map.addObjects([routeLine, startMarker, endMarker]);
       map.getViewModel().setLookAtData({ bounds: routeLine.getBoundingBox() });
     });
-  }
+  } else alert("Route not found!");
 };
 
 const getGeoCode = (location, callback) => {
@@ -65,6 +81,17 @@ const getGeoCode = (location, callback) => {
     });
 };
 
-const showTable = (values) => {};
+const showTable = (values) => {
+  const outerHtml = `
+    <tr>
+      <th>${values[0]}</th>
+      <th>${values[1]}</th>
+      <th>${Math.round(values[2] / 1000)} km</th>
+      <th>${Math.round(values[3] / 60)} min</th>
+    </tr>
+    `;
+  table.current.querySelector("tbody").insertAdjacentHTML("beforeend", outerHtml);
+  $("#table").DataTable();
+};
 
 export default calculateRoute;

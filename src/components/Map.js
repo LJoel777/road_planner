@@ -3,7 +3,7 @@ import styled from "styled-components";
 import setUp from "./mapSetUp";
 
 const MapContainer = styled.div`
-  width: 100vw;
+  max-width: 100vw;
   height: 80vh;
 `;
 
@@ -21,11 +21,7 @@ const Map = (props) => {
     setLoading(false);
   }, []);
 
-  return (
-    <div className="container">
-      <MapContainer ref={mapRef} className="mapContainer"></MapContainer>
-    </div>
-  );
+  return <MapContainer ref={mapRef} className="mapContainer"></MapContainer>;
 };
 
 export default Map;
