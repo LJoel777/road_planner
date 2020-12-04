@@ -3,7 +3,7 @@ import onResize from "simple-element-resize-detector";
 
 const setUp = (mapRef) => {
   const platform = new H.service.Platform({
-    apikey: "rccZWM00Ce0L6xWuzrWmondQKje9ki46cH-1-bAC2Wc",
+    apikey: process.env.REACT_APP_HERE_API_KEY,
   });
 
   const defaultLayers = platform.createDefaultLayers();

@@ -6,7 +6,7 @@ import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-dt/css/jquery.dataTables.min.css";
 import $ from "jquery";
 
-const API_KEY = "4jT00cTYzYKV-lhBKaSLaGw5NxljCfqOWAA0hDibxA0";
+const API_KEY = process.env.REACT_APP_HERE_REST_API_KEY;
 let router = null;
 let map = null;
 let table = null;
