@@ -7,9 +7,9 @@ const MapContainer = styled.div`
   height: 80vh;
 `;
 
-const Map = () => {
-  const [map, setMap] = useState();
-  const [platform, setPlatform] = useState();
+const Map = (props) => {
+  const setMap = props.map;
+  const setPlatform = props.platform;
   const [loading, setLoading] = useState(true);
   const mapRef = useRef();
 
