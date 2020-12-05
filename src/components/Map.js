@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useContext } from "react";
 import styled from "styled-components";
 import setUp from "./mapSetUp";
+import { MapAndPlatformContext } from "../context/MapAndPlatformContext";
 
 const MapContainer = styled.div`
   flex: 2;
@@ -8,9 +9,9 @@ const MapContainer = styled.div`
   height: 85vh;
 `;
 
-const Map = (props) => {
-  const setMap = props.map;
-  const setPlatform = props.platform;
+const Map = () => {
+  const setMap = useContext(MapAndPlatformContext).setMap;
+  const setPlatform = useContext(MapAndPlatformContext).setPlatform;
   const mapRef = useRef();
 
   useEffect(() => {

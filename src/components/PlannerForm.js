@@ -1,9 +1,10 @@
-import React, { useRef } from "react";
+import React, { useRef, useContext } from "react";
 import styled from "styled-components";
-import calculateRoute from "./calculateRoute";
 import RoomIcon from "@material-ui/icons/Room";
 import LocationSearchingIcon from "@material-ui/icons/LocationSearching";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
+import { LocationContext } from "../context/LocationContext";
+import RouteCalculator from "./RouteCalculator";
 
 const Form = styled.div`
   flex: 1;
@@ -51,7 +52,7 @@ const Form = styled.div`
   }
   .table-container {
     flex: 1;
-    table {
+    #table {
       border: solid;
       display: none;
       text-align: center;
@@ -65,16 +66,44 @@ const Form = styled.div`
   }
 `;
 
-const PlannerForm = (props) => {
-  const platform = props.platform;
-  const map = props.map;
+const PlannerForm = () => {
+  const API_KEY = process.env.REACT_APP_HERE_REST_API_KEY;
   const startWayPoint = useRef();
   const destinationWayPoint = useRef();
-  const table = useRef();
+  const setRoute = useContext(LocationContext).setRoute;
+  const setLocationsName = useContext(LocationContext).setLocationsName;
 
   const onSubmit = () => {
     if (startWayPoint.current.value === "" || destinationWayPoint.current.value === "") alert("All fields required");
-    else calculateRoute(map, platform, startWayPoint, destinationWayPoint, table);
+    else setLocations(startWayPoint.current.value, destinationWayPoint.current.value);
+  };
+
+  const getGeoCode = (location, callback) => {
+    fetch(`https://geocode.search.hereapi.com/v1/geocode?q=${location}&apiKey=${API_KEY}`)
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.error) throw new Error("ApiKey invalid or expired!");
+        else {
+          if (res.items.length) callback(res);
+          else alert(`Location (${location}) not found!`);
+        }
+      })
+      .catch((error) => alert(error));
+  };
+
+  const setLocations = (startWayPoint, endWayPoint) => {
+    getGeoCode(startWayPoint, (data) => {
+      const startWayPointCord = data.items[0].position;
+      getGeoCode(endWayPoint, (data) => {
+        const endWayPointCord = data.items[0].position;
+        const route = {
+          startPos: startWayPointCord,
+          endPos: endWayPointCord,
+        };
+        setLocationsName({ startLocName: startWayPoint, endLocName: endWayPoint });
+        setRoute(route);
+      });
+    });
   };
 
   return (
@@ -95,19 +124,7 @@ const PlannerForm = (props) => {
           </button>
         </div>
       </div>
-      <div className="table-container">
-        <table id="table" ref={table}>
-          <thead>
-            <tr>
-              <th>From</th>
-              <th>To</th>
-              <th>Distance</th>
-              <th>Duration</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
+      <RouteCalculator />
     </Form>
   );
 };

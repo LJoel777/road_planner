@@ -1,16 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 import Map from "./components/Map";
 import PlannerForm from "./components/PlannerForm";
+import { LocationContextProvider } from "./context/LocationContext";
+import { MapAndPlatformContextProvider } from "./context/MapAndPlatformContext";
 
 const App = () => {
-  const [map, setMap] = useState();
-  const [platform, setPlatform] = useState();
-
-  const Form = map && platform ? <PlannerForm map={map} platform={platform} /> : "";
   return (
     <div className="app-container">
-      <Map map={setMap.bind(this)} platform={setPlatform.bind(this)} />
-      {Form}
+      <MapAndPlatformContextProvider>
+        <Map />
+        <LocationContextProvider>
+          <PlannerForm />
+        </LocationContextProvider>
+      </MapAndPlatformContextProvider>
     </div>
   );
 };
